@@ -1,24 +1,24 @@
-# Climbers
+# Climbers and Playtomic
+======================
 
-![Climbers](http://iplayful.com/climbers/climbers-thumb-2.jpg)
+Climbers, the open source game by Sergey Tikhonov is now integrated with Playtomic's analytics. Game developers, feel free to use this example to integrate Playtomic's APIs into your game.
 
-Two climbers connected with a rope need to make their way to the top of the wall. Drag them with your finger, avoid falling rocks and collect stars on the way. This game has started as a competition entry for the [Game Prototype Challenge v5][3].
+## Integrated so far
+- Custom metrics
+- Level metrics
+- Heatmaps
 
-* [Climbers on the App Store][1] (Free)
-* [Climbers video on YouTube][2]
+## Metrics being tracked
+- Game Intro Menu : "Play", "More games" and "Source code" button
+- Levels : Begins, Fails, Restarts, Percentage of stars collected
+- Heatmaps : Snap positions of the climbers, in all 15 levels
 
-Powered by [Cocos2D][4] framework (v1.0.0-rc2).
+## LIVE DATA
+View the public [dashboard][1]
 
-[1]: http://itunes.apple.com/us/app/climbers/id434336581?mt=8&ls=1
-[2]: http://www.youtube.com/watch?v=-NDvp5B4ir4
-[3]: http://gameprototypechallenge.com/v5
-[4]: http://www.cocos2d-iphone.org/
+## Heatmap Example, from Level 10
+![Heatmap](http://i.imgur.com/URxHF.png)
+Notice how we can study the player's movement based on where they tend to snap the climbers. Combined with level metrics, we can design better levels!
 
-## License
-
-The code is released under the [MIT License][5].
-
-Game assets are copyrighted by [Sergey Tikhonov][6]. Please use them only for learning purposes, and don't release with your own project.
-
-[5]: http://opensource.org/licenses/mit-license.php
-[6]: http://haqu.net/
+[1]: http://playtomic.com/dashboard/overview/5139
+[2]: http://haqu.net/
