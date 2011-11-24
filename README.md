@@ -11,6 +11,8 @@ Climbers, the open source game by Sergey Tikhonov is now integrated with Playtom
 - Levels : Begins, Fails, Restarts, Percentage of stars collected
 - Heatmaps : Snap positions of the climbers, in all 15 levels
 
+Tip: after cloning the project, search for all "Playtomic" instances in Game.m, to see how we did it.
+ 
 ## LIVE DATA
 View the public [dashboard][1]
 
