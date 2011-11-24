@@ -11,6 +11,8 @@
 #import "SimpleAudioEngine.h"
 #import "GameConfig.h"
 
+#import "Playtomic.h"
+
 #ifdef MAC
 #import "CDXMacOSXSupport.h"
 #endif
@@ -132,6 +134,11 @@
 		
 		[[SimpleAudioEngine sharedEngine] stopBackgroundMusic];
 		[[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"intro.mp3"];
+
+		// initialize Playtomic
+		[[Playtomic alloc] initWithGameId:5139 andGUID:@"df0e43aae3694755" andAPIKey: @"958577b9031a4ae6857174935c402e"];
+		[[Playtomic Log] view];
+
 	}
 	return self;
 }
@@ -195,20 +202,36 @@
 	rect = CGRectMake(sw/2-64, sh/2-64, 128, 128);
 	if(CGRectContainsPoint(rect, location)) {
 		[[CCDirector sharedDirector] pushScene:[Game scene]];
+		
+		// Log play
+		[[Playtomic Log] play];
+		
+		// Track if user clicked on "Play" button
+		[[Playtomic Log] customMetricName:@"ClickedPlay" andGroup:@"IntroScreen" andUnique:NO]; 
 	}
 	
 	// more games button
 	rect = CGRectMake(sw/4-32, sh/2-32, 64, 64);
 	if(CGRectContainsPoint(rect, location)) {
+
+		// Track if user clicked on "More Games" button
+		[[Playtomic Log] customMetricName:@"ClickedMoreGames" andGroup:@"IntroScreen" andUnique:NO]; 
+
 		NSString *urlString = @"itms-apps://itunes.com/apps/iplayfulinc";
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+				
 	}
 	
 	// game sources button
 	rect = CGRectMake(sw*3/4-32, sh/2-32, 64, 64);
 	if(CGRectContainsPoint(rect, location)) {
+
+		// Track if user clicked on "Game Source Code" button
+		[[Playtomic Log] customMetricName:@"ClickedGameSources" andGroup:@"IntroScreen" andUnique:NO]; 
+
 		NSString *urlString = @"https://github.com/haqu/climbers";
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+		
 	}
 }
 

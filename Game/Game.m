@@ -19,6 +19,9 @@
 #import "CDXMacOSXSupport.h"
 #endif
 
+
+#import "Playtomic.h"
+
 #ifdef IOS
 #define kFontName @"ChalkboardSE-Bold"
 #else
@@ -79,6 +82,8 @@ enum {
 		CGSize screenSize = [[CCDirector sharedDirector] winSize];
 		sw = screenSize.width;
 		sh = screenSize.height;
+		
+		NSLog(@"screen width: %f, height: %f", sw, sh);
 		
 		ropeLength = sh*250/1024;
 		heroStarDist = sh*48.0f/1024;
@@ -165,6 +170,15 @@ enum {
 		[[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"game.mp3" loop:YES];
 		
 		[self schedule:@selector(update:)];
+		
+		// Track beginning of level
+		[[Playtomic Log] levelCounterMetricName:@"Began" andLevelNumber:currentLevel andUnique:NO];  // currentLevel is an int
+
+		// Alternative: For readability: construct a string "Level_N" from currentLevel
+		// NSString *baseLevelString=@"Level_"; 
+		// NSString *levelString=[baseLevelString stringByAppendingFormat:@"%d ",currentLevel];
+		// [[Playtomic Log] levelCounterMetricName:@"Began" andLevel:levelString andUnique:NO]; 
+
 	}
 	return self;
 }
@@ -188,6 +202,9 @@ enum {
 }
 
 - (void)loadLevel {
+	// TEST
+	// currentLevel = 10;
+	
 	NSString *basename = [NSString stringWithFormat:@"%02d",currentLevel];
 	NSString *path = [[NSBundle mainBundle] pathForResource:basename ofType:@"svg"];
 	NSString *content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -245,7 +262,9 @@ enum {
 		[scanner scanUpToString:@"cy" intoString:nil];
 		[scanner scanString:@"cy=\"" intoString:nil];
 		[scanner scanFloat:&y];
+		
 		p = ccp(x*sw/768,sh-y*sh/1024);
+		
 		if(isGrab) {
 			grab = [[Grab alloc] initWithPosition:p];
 			[grabs addObject:grab];
@@ -258,6 +277,7 @@ enum {
 			[star release];
 			starsTotal++;
 		}
+		
 	}
 
 	[batch1 removeChildByTag:kTagBottom cleanup:YES];
@@ -277,6 +297,8 @@ enum {
 	flower.position = ccp(sw/2, levelHeight);
 	flower.tag = kTagFlower;
 	[batch1 addChild:flower z:12];
+	
+	NSLog(@"Current level: %@",[NSString stringWithFormat:@"%d", currentLevel]);
 }
 
 - (void)resetLevel {
@@ -333,6 +355,10 @@ enum {
 	dragInProgress = NO;
 	gameInProgress = YES;
 	[self scheduleRockAlert];
+	
+	// Track level restart
+	[[Playtomic Log] levelCounterMetricName:@"Restarts" andLevelNumber:currentLevel andUnique:NO]; // currentLevel is an int
+
 }
 
 - (void)levelFailed {
@@ -354,6 +380,9 @@ enum {
 	label.tag = kTagLabel;
 	[self addChild:label z:12];
 	nextLevel = currentLevel;
+
+	// Track level failed
+	[[Playtomic Log] levelCounterMetricName:@"Failed" andLevelNumber:currentLevel andUnique:NO]; // currentLevel is an int
 }
 
 - (void)levelCompleted {
@@ -420,6 +449,14 @@ enum {
 	} else {
 		[[NSUserDefaults standardUserDefaults] setInteger:nextLevel forKey:@"currentLevel"];
 	}
+	
+	int percentStarsCollected = (int)((float)starsCollected/(float)starsTotal*100);
+	
+	// Track level completed
+	[[Playtomic Log] levelCounterMetricName:@"Completed" andLevelNumber:currentLevel andUnique:NO]; // currentLevel is an int
+
+	// Track percentage of stars collected
+	[[Playtomic Log] levelRangedMetricName:@"PercentStarsCollected" andLevelNumber:currentLevel andTrackValue:percentStarsCollected andUnique:NO];
 	
 //	[self sparkleAt:ccp(384-8, levelHeight+64)];
 }
@@ -655,6 +692,20 @@ enum {
 - (BOOL)dragHeroNearGrab:(Grab*)g {
 	float dist = ccpDistance(dragHero.position, g.position);
 	if(dist < snapDist) {
+
+		// Prep variables for heatmap
+		NSString *baseLevelString=@"level"; 
+		NSString *levelString=[baseLevelString stringByAppendingFormat:@"%d",currentLevel];
+		NSString *heatMapString = [levelString stringByAppendingString:@"snaplocation"];
+		
+		// Track position of player "snapping" to the grab
+		// Note: Playtomic's dashboard will plot the heatmap from top left corner
+		// Since Cocos2D uses bottom left corner as the origin, we use simple translation: y = levelHeight - y_pos
+		[[Playtomic Log] heatmapName:heatMapString andGroup:levelString andX:(int)g.position.x andY:levelHeight-(int)g.position.y];
+		
+		NSLog(@"%@ %@",heatMapString,levelString);
+		NSLog(@"Snapped %d %d",(int)g.position.x,(int)g.position.y);
+		
 		return YES;
 	}
 	return NO;
@@ -727,6 +778,7 @@ enum {
 			snapFeedback.opacity = t*255.0f;
 			snapFeedback.position = g.position;
 			snapped = YES;
+			
 			break;
 		}
 	}
