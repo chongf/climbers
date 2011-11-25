@@ -138,6 +138,7 @@
 		// initialize Playtomic
 		[[Playtomic alloc] initWithGameId:5139 andGUID:@"df0e43aae3694755" andAPIKey: @"958577b9031a4ae6857174935c402e"];
 		[[Playtomic Log] view];
+		
 
 	}
 	return self;

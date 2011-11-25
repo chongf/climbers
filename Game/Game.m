@@ -20,7 +20,8 @@
 #endif
 
 
-#import "Playtomic.h"
+#import "Playtomic.h" // General Use
+#import "PlaytomicResponse.h" // for GameVars
 
 #ifdef IOS
 #define kFontName @"ChalkboardSE-Bold"
@@ -179,8 +180,32 @@ enum {
 		// NSString *levelString=[baseLevelString stringByAppendingFormat:@"%d ",currentLevel];
 		// [[Playtomic Log] levelCounterMetricName:@"Began" andLevel:levelString andUnique:NO]; 
 
+		// load Playtomic GameVars
+		[self loadGameVarsAsync];
+		
 	}
 	return self;
+}
+
+- (void)loadGameVarsAsync
+{
+    NSLog(@"Loading GameVarsAsync...");
+    [[Playtomic GameVars] loadAsync:self];
+}
+
+// PlaytomicDelegate protocol implementation
+- (void)requestLoadGameVarsFinished:(PlaytomicResponse*)response
+{    
+    if([response success])
+		{            
+			NSLog(@"%@ = %@", @"RockMaxVerticalVelocity", [response getValueForName:@"RockMaxVerticalVelocity"]);
+			
+			rock.maxVelocity = CGPointMake(rock.maxVelocity.x, [[response getValueForName:@"RockMaxVerticalVelocity"] floatValue]);
+		}
+    else
+		{
+        NSLog(@"GameVarsAsync failed to load because of errorcode #%d", [response errorCode]);
+		}
 }
 
 - (void)dealloc {
@@ -819,5 +844,6 @@ enum {
 		}
 	}
 }
+
 
 @end

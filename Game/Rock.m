@@ -8,16 +8,21 @@
 
 #import "Rock.h"
 
+
 @implementation Rock
 
-@synthesize velocity, falling;
+@synthesize velocity, falling, maxVelocity;
 
 - (id)initWithPosition:(CGPoint)pos {
 	if((self = [super initWithSpriteFrameName:@"rock.png"])) {
 		self.position = pos;
 		velocity = CGPointZero;
 		falling = NO;
+
+		maxVelocity.y = -10;
+		maxVelocity.x = 0;
 	}
+	
 	return self;
 }
 
@@ -27,7 +32,7 @@
 	if(self.position.y > kGroundY) {
 		velocity = ccpAdd(velocity, ccp(0, -20.0f*dt));
 		if(velocity.y < -10.0f) {
-			velocity = ccp(0, -10); // limit
+			velocity = ccp(0, maxVelocity.y); // limit
 		}
 		self.position = ccpAdd(self.position, velocity);
 	} else if(self.position.y < kGroundY) {
@@ -36,5 +41,6 @@
 		velocity = CGPointZero;
 	}
 }
+
 
 @end

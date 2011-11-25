@@ -7,12 +7,14 @@
  */
 
 #import "cocos2d.h"
+#import "PlaytomicResponse.h" // for GameVars
 
 @class Hero;
 @class VRope;
 @class Rock;
 
-@interface Game : CCLayer {
+// note the <PlaytomicDelegate>
+@interface Game : CCLayer <PlaytomicDelegate> {
 	CCSpriteBatchNode *batch1;
 	CCSpriteBatchNode *batch2;
 	CCSpriteBatchNode *ropeBatch;
@@ -50,5 +52,5 @@
 	CCSprite *menuButton;
 }
 + (CCScene*)scene;
-
+- (void)loadGameVarsAsync;
 @end

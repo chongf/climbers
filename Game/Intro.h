@@ -8,7 +8,7 @@
 
 #import "cocos2d.h"
 
-@interface Intro : CCLayer {
+@interface Intro : CCLayer{
     CCSprite *playButton;
 	CCSprite *moreGamesButton;
 	CCSprite *gameSourcesButton;
