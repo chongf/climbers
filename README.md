@@ -1,6 +1,9 @@
 # Climbers and Playtomic
 Climbers, the open source game by Sergey Tikhonov is now integrated with Playtomic's analytics. Game developers, feel free to use this example to integrate Playtomic's APIs into your game.
 
+## About the game ##
+Player controls two rock climbers, trying to get both to the top. Rocks are randomly generated to fall downwards. Avoid them, and collect stars along the way.
+
 ## Integrated so far
 - Custom metrics
 - Level metrics
